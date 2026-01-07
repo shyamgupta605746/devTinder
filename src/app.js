@@ -2,21 +2,13 @@ const express = require('express');
 
 const app = express();
 
-app.get("/user",(req, res)=>{
-   res.send("im user post data");
+app.get("/user/:userId/:name/:password",(req, res)=>{
+   console.log(req.params);
+   
+   res.send({ firstName: "shyam", lastName: "Shalini gupta"});
 });
 
-app.post("/user",(req, res)=>{
-   res.send("im post data of user");
-});
 
-app.delete("/user", (req,res)=>{
-   res.send("im delete jai ho");
-});
-
- app.use("/test", (req, res)=>{
-    res.send("im test jai ho");
- });
 
 
 app.listen(3000, ()=>{
