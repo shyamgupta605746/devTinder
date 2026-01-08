@@ -16,6 +16,27 @@ app.post("/signup", async (req, res)=>{
     }
 });
 
+//get user by email
+app.get("/user", async (req, res) => {
+    try{
+    const userEmail = req.body.emailId;
+    const user = await User.find({ emailId: userEmail });
+    res.send(user);
+    }catch(err){
+        res.status(400).send("something went wrong");
+    }
+});
+
+app.get("/feed", async (req, res)=>{
+    try{
+        const users = await User.find({});
+        res.send(users);
+    }catch(err){
+        res.status(400).send("something went wrong");
+    }
+});
+
+
 dbConnection()
 .then(()=>{
   console.log("Database connected successfully");
