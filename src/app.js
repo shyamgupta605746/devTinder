@@ -3,26 +3,23 @@ const express = require('express');
 const app = express();
 const {auth, userAuth} = require('./middleware/auth');
 
-app.use("/admin", auth);
-
-app.get("/admin/getAllData", (req, res)=>{
-    console.log("admin");
-    res.send("admin all data request") 
-});
-
-app.get("/admin/deleteUser", (req, res)=>{
-    console.log("admin");
-    res.send("user deleted by admin successfully"); 
-});
 
 //user reuest
-app.post("/user/login",(req, res)=>{
+app.post("/getUserData",(req, res)=>{
+    try{
+    // throw new Error("yesss daddy");
+    
     res.send("login");
+}
+catch(err){
+    res.status(500).send('err');
+}
 });
 
-app.get("/user/dashboard", userAuth,(req, res)=>{
-    console.log("user");
-    res.send("user login request");
+app.use("/", (err, req, res, next)=>{
+   if(err){
+    res.status(500).send("something wen't wrong");
+   }
 });
 
 app.listen(3000, ()=>{
