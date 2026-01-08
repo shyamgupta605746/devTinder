@@ -2,11 +2,21 @@ const express = require('express');
 
 const app = express();
 
-app.get("/user/:userId/:name/:password",(req, res)=>{
+app.get("/user/:userId/:name/:password",(req, res, next)=>{
    console.log(req.params);
-   
-   res.send({ firstName: "shyam", lastName: "Shalini gupta"});
-});
+   next()
+   res.send("first route execute");
+},
+(req, res, next)=>{
+    console.log("second route execute");
+    res.send("second route execute")
+    next();
+},
+(req, res)=>{
+    console.log("third route execute");
+    res.send("third route execute");
+}
+);
 
 
 
