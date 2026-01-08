@@ -1,32 +1,18 @@
 const express = require('express');
 const dbConnection = require("./config/database");
 const User = require("./models/user");
-const Cricket = require("./models/cricket");
 const app = express();
 
 
+ app.use(express.json());
+
 app.post("/signup", async (req, res)=>{
-    const user = new User({
-        firstName: "shalini",
-        lastName: "shyam gupta",
-        emailId: "shalinigupta605746@gmail.com",
-        password: "Shylini@080607",
-    });
+    const user = new User(req.body);
+    try{
     await user.save();
     res.send("data added successfully into user table");
-});
-
-app.post("/cricket", async (req, res)=>{
-    const cricket = new Cricket({
-        pName: "hardik pandya",
-        profes: "all rounder",
-        number: "4",
-    }); 
-    try{
-    await cricket.save();
-    res.send("crickter id sended successfuly");
     }catch(err){
-        res.status(400).send("lil problem while sending data");
+        res.status(500).send("lil problem while sending data");
     }
 });
 
