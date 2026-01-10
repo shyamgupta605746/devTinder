@@ -56,14 +56,22 @@ app.get("/feed", async (req, res)=>{
     }
 });
 
-app.patch("/update", async (req, res)=>{
-    const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res)=>{
+    const userId = req.params?.userId;
     const data = req.body;
+
     try{
+    const ALLOWED_UPDATES = ["age", "gender", "firstName"];
+
+    const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATES.includes(k));
+    if(!isUpdateAllowed){
+       throw new Error("Unexpected token");
+    }
+
          await User.findByIdAndUpdate({_id: userId}, data);
          res.send("user updated sucessfully");
     }catch(err){
-        res.status(500).send("something went wrong");
+         res.status(500).send("Something went wrong" + "-" + err.message);
     }
 });
 
