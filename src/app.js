@@ -12,7 +12,7 @@ app.post("/signup", async (req, res)=>{
     await user.save();
     res.send("data added successfully into user table");
     }catch(err){
-        res.status(500).send("lil problem while sending data");
+        res.status(500).send("lil problem while sending data" + err.message);
     }
 });
 
