@@ -4,8 +4,12 @@ const User = require("./models/user");
 const app = express();
 const {validatesingnUpData} = require('./utils/validation')
 const bcrypt = require("bcrypt");
-
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
  app.use(express.json());
+ app.use(cookieParser());
+ const {userAuth} = require("./middleware/auth");
+const user = require('./models/user');
 //signUp
 app.post("/signup", async (req, res) => {
     try {
@@ -40,6 +44,8 @@ app.post("/login", async(req, res)=>{
     }
     const isPAsswordValid = await bcrypt.compare(password, user.password);
     if(isPAsswordValid){
+        const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$080607");
+        res.cookie("token", token);
         res.send("Login Successfully");
     }else{
         throw new Error("Password is not correct");
@@ -49,66 +55,18 @@ app.post("/login", async(req, res)=>{
 }
 });
 
-
-//get user by email
-app.get("/user", async (req, res) => {
-    try{
-    const userEmail = req.body.emailId;
-    const user = await User.find({ emailId: userEmail });
+app.post("/profile", userAuth, async(req, res)=>{
+   try{const user = req.user;
     res.send(user);
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
+}catch(err){
+    res.status(500).send("Error: " + err.message)
+}
 });
 
-app.get("/feed", async (req, res) => {
-    try{
-    const userEmail = req.body.emailId;
-    const user = await User.find({});
-    res.send(user);
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
+app.post("/sendConnectionRequest", userAuth, async(req, res)=>{
+  const user =  req.user;
+  res.send(user.firstName + " sent the connection request");
 });
-
-app.delete("/user", async (req, res)=>{
-    const userId = req.body.userId;
-    try{
-        const user = await User.findByIdAndDelete(userId);
-        res.send("user deleted successfully");
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
-});
-
-app.get("/feed", async (req, res)=>{
-    try{
-        const users = await User.find({});
-        res.send(users);
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
-});
-
-app.patch("/user/:userId", async (req, res)=>{
-    const userId = req.params?.userId;
-    const data = req.body;
-
-    try{
-    const ALLOWED_UPDATES = ["age", "gender", "firstName"];
-
-    const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATES.includes(k));
-    if(!isUpdateAllowed){
-       throw new Error("Unexpected token");
-    }
-
-         await User.findByIdAndUpdate({_id: userId}, data);
-         res.send("user updated sucessfully");
-    }catch(err){
-         res.status(500).send("Something went wrong" + "-" + err.message);
-    }
-});
-
 
 dbConnection()
 .then(()=>{

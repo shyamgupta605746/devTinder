@@ -1,21 +1,23 @@
-const auth = (req, res, next)=>{
-    const token = "xyz";
-    const isAdminToken = token === "xyz";
-    if(isAdminToken){
-        next();
-    }else{
-        res.status(401).send("unauthorised request, acess denied");
-    }
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const userAuth = async (req, res, next)=>{
+ try{ 
+    const {token} = req.cookies;
+   if(!token){
+    throw new Error("Token is not valid~!!!!");
+   }
+  const decodedobj = await jwt.verify(token, "DEV@Tinder$080607");
+
+  const { _id } = decodedobj;
+  const user  = await User.findById(_id);
+  if(!user){
+    throw new Error("User not found");
+  }
+  req.user = user;
+  next();
+}catch(err){
+    res.status(400).send("Error: " + err.message);
+}
 }
 
-const userAuth = (req, res, next)=>{
-     const userToken = "myuser";
-    const userloginToken = userToken === "myus.er";
-    if(userloginToken){
-    next();
-    }else{
-        res.status(401).send("unauthorized request");
-    }
-}
-
-module.exports = { auth, userAuth };
+module.exports = { userAuth };
