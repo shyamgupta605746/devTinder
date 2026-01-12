@@ -42,10 +42,12 @@ app.post("/login", async(req, res)=>{
     if(!user){
         throw new Error("Email Id is invalid");
     }
-    const isPAsswordValid = await bcrypt.compare(password, user.password);
+    const isPAsswordValid = await user.validatePassword(password);
     if(isPAsswordValid){
-        const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$080607");
-        res.cookie("token", token);
+        const token = await user.getJWT();
+        res.cookie("token", token,{
+            expires: new Date(Date.now() + 8 * 3600000),
+        });
         res.send("Login Successfully");
     }else{
         throw new Error("Password is not correct");
