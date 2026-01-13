@@ -42,6 +42,22 @@ const userSchema = new mongoose.Schema({
             }
         },
     },
+    photoUrl:{
+        type: String,
+        default: "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png",
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("Invalid photo URL: " + value);
+            }
+        },
+    },
+    about:{
+        type: String,
+        default: "This is a default about of user! ",
+    },
+        skills: {
+            type: [String],
+    },
 },
 {
     timestamps: true,
