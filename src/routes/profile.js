@@ -2,10 +2,12 @@ const express =  require("express");
 const profileRouter = express.Router();
 const {userAuth} = require("../middleware/auth");
 const {validateEditprofileData} = require("../utils/validation");
-const user = require("../models/user");
+const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-profileRouter.post("/profile/view", userAuth, async(req, res)=>{
+
+
+profileRouter.get("/profile/view", userAuth, async(req, res)=>{
    try{const user = req.user;
     res.send(user);
 }catch(err){

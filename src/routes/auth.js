@@ -1,7 +1,6 @@
 const express = require("express");
 const authRouter = express.Router();
 const {validatesingnUpData} = require('../utils/validation');
-const user = require('../models/user');
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 //signUp
